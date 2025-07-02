@@ -4,9 +4,9 @@ export default function Home() {
   return (
     <div>
       <p className="text-primary-500 background-light850_dark100 font-main">
-        Hello Bitch
+        Hello sdcs
       </p>
-      <h1 className="font-space-grotesk">By bitch</h1>
+      <h1 className="font-space-grotesk">By sdcs</h1>
     </div>
   );
 }
