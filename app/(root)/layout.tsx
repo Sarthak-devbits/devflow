@@ -4,6 +4,8 @@ import RightSidebar from "@/components/navigation/RightSidebar";
 import React from "react";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
+
+
   return (
     <main className="background-light850_dark100 realtive">
       <Navbar />
