@@ -8,6 +8,10 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+.mdxeditor-diff-source-wrapper {
+  min-height: 300px;
+}
+
 @theme {
   --color-primary-100: #fff1e6;
   --color-primary-500: #ff7000;

@@ -46,7 +46,7 @@ export default async function RootLayout({
       </head>
       <SessionProvider session={session}>
         <body
-          className={`${inter.className} ${spaceGrotesk.variable} antialiased`}
+          className={`${inter.className} ${spaceGrotesk.variable} antialiased `}
         >
           <ThemeProvider
             attribute={"class"}
