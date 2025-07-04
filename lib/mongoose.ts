@@ -29,6 +29,8 @@ const dbConnect = async (): Promise<Mongoose | null> => {
     return cached.conn;
   }
   if (!cached.promise) {
+
+    // NOTE: a promise always return a promise object
     cached.promise = mongoose
       .connect(MONGODB_URI)
       .then((mongooseInstance) => {
@@ -43,3 +45,5 @@ const dbConnect = async (): Promise<Mongoose | null> => {
   cached.conn = await cached.promise;
   return cached.conn;
 };
+
+export default dbConnect;
