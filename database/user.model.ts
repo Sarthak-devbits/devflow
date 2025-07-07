@@ -50,4 +50,5 @@ const UserSchema = new Schema(
 );
 
 const User = models?.User || model<IUserInterface>("User", UserSchema);
+
 export default User;
