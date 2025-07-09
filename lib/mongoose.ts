@@ -1,5 +1,6 @@
 // IMPORTANT
 import mongoose, { Mongoose } from "mongoose";
+import logger from "./logger";
 
 const MONGODB_URI = process.env.MONGODB_URI;
 
@@ -26,18 +27,19 @@ if (!cached) {
 
 const dbConnect = async (): Promise<Mongoose | null> => {
   if (cached.conn) {
+    logger.info("Using existin Mongoose Connection");
     return cached.conn;
   }
   if (!cached.promise) {
-
     // NOTE: a promise always return a promise object
     cached.promise = mongoose
       .connect(MONGODB_URI)
       .then((mongooseInstance) => {
+        logger.info("Connected to MongoDB");
         return mongooseInstance;
       })
       .catch((error) => {
-        console.error("Failed to connect to MongoDB:", error);
+        logger.error("Failed to connect to MongoDB:", error);
         throw new Error("Failed to connect to MongoDB");
       });
   }
