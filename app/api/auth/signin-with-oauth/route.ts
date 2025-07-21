@@ -5,7 +5,6 @@ import { ValidationError } from "@/lib/http-errors";
 import dbConnect from "@/lib/mongoose";
 import { SignInWithOAuthSchema } from "@/lib/validation";
 import mongoose from "mongoose";
-import image from "next/image";
 import { NextResponse } from "next/server";
 import slugify from "slugify";
 
@@ -77,8 +76,9 @@ export async function POST(request: Request) {
     }
     await session.commitTransaction();
     return NextResponse.json({ success: true });
-    
+
   } catch (error: unknown) {
+    console.log(error)
     await session.abortTransaction();
     return handleError(error, "api") as APIErrorResponse;
   } finally {
