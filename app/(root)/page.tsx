@@ -86,6 +86,7 @@ export default async function Home({ searchParams }: SearchParams) {
         />
       </section>
       <HomeFilter />
+
       <DataRenderer
         success={success}
         error={error}
