@@ -1,12 +1,13 @@
-import { model, models, Schema } from "mongoose";
+import mongoose, {
+  Schema,
+  model,
+  models,
+  InferSchemaType,
+  HydratedDocument,
+} from "mongoose";
 
-export interface ITag {
-  name: String;
-  questions: number;
-}
-
-export interface ITagDoc extends ITag, Document {}
-const TagSchema = new Schema<ITag>(
+// Schema definition
+const TagSchema = new Schema(
   {
     name: {
       type: String,
@@ -23,6 +24,11 @@ const TagSchema = new Schema<ITag>(
   }
 );
 
+// Infer types from schema
+type ITag = InferSchemaType<typeof TagSchema>;
+export type ITagDoc = HydratedDocument<ITag>;
+
+// Create model
 const Tag = models?.Tag || model<ITag>("Tag", TagSchema);
 
 export default Tag;

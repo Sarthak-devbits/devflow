@@ -19,7 +19,7 @@ import { Input } from "../ui/input";
 import { AskQuestionSchema } from "@/lib/validation";
 import TagCard from "../cards/TagCard";
 import { z } from "zod";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import ROUTES from "@/constants/routes";
@@ -29,7 +29,12 @@ const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const QuestionForm = () => {
+interface Params {
+  question?: Question;
+  isEdit?: boolean;
+}
+
+const QuestionForm = ({ question, isEdit = false }: Params) => {
   const router = useRouter();
   const editorRef = useRef<MDXEditorMethods>(null);
   const [isPending, startTransition] = useTransition();
@@ -37,9 +42,9 @@ const QuestionForm = () => {
   const form = useForm<z.infer<typeof AskQuestionSchema>>({
     resolver: zodResolver(AskQuestionSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      tags: [],
+      title: question?.title || "",
+      content: question?.content || "",
+      tags: question?.tags.map((tag) => tag.name) || [],
     },
   });
 
@@ -101,6 +106,27 @@ const QuestionForm = () => {
     data: z.infer<typeof AskQuestionSchema>
   ) => {
     startTransition(async () => {
+      if (isEdit && question) {
+        const result = await editQuestion({
+          questionId: question?._id,
+          ...data,
+        });
+
+        if (result.success) {
+          toast.success("Success", {
+            description: "Question Updated Successfully",
+          });
+          if (result?.data) {
+            router.push(ROUTES.QUESTION(result.data?._id as any));
+          } else {
+            toast.error(`Error ${result.status}`, {
+              description: result?.error?.message || "Something went wrong",
+            });
+          }
+        }
+        return;
+      }
+
       const result = await createQuestion(data);
 
       if (result.success) {
@@ -187,9 +213,9 @@ const QuestionForm = () => {
                   />
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 flex-wrap gap-2.5">
-                      {field?.value?.map((tag: string) => (
+                      {field?.value?.map((tag: string, index) => (
                         <TagCard
-                          key={tag}
+                          key={index}
                           _id={tag}
                           name={tag}
                           compact
@@ -223,7 +249,7 @@ const QuestionForm = () => {
                 <span>Submitting</span>
               </>
             ) : (
-              "Ask A Question"
+              <> {isEdit ? "Edit" : "Ask A Question"}</>
             )}
           </Button>
         </div>
