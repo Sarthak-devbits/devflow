@@ -1,6 +1,6 @@
 "use server";
 
-import mongoose, { FilterQuery } from "mongoose";
+import mongoose, { Error, FilterQuery } from "mongoose";
 
 import Question, { IQuestionDoc } from "@/database/question.model";
 import TagQuestion from "@/database/tag-question.model";
@@ -12,8 +12,11 @@ import {
   AskQuestionSchema,
   EditQuestionSchema,
   GetQuestionSchema,
+  IncrementViewsSchema,
   PaginatedSearchParamsSchema,
 } from "../validation";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
 export async function createQuestion(
   params: CreateQuestionParams
@@ -203,7 +206,9 @@ export async function getQuestion(
   const { questionId } = validationResult.params!;
 
   try {
-    const question = await Question.findById(questionId).populate("tags");
+    const question = await Question.findById(questionId)
+      .populate("tags")
+      .populate("author", "_id name image");
 
     if (!question) {
       throw new Error("Question not found");
@@ -264,7 +269,6 @@ export async function getQuestions(
 
   try {
     const totalQuestions = await Question.countDocuments(filterQuery);
-  
 
     const questions = await Question.find(filterQuery)
       .populate("tags", "name")
@@ -279,6 +283,41 @@ export async function getQuestions(
     return {
       success: true,
       data: { questions: JSON.parse(JSON.stringify(questions)), isNext },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+export async function incrementViews(
+  params: IncrementViewsParams
+): Promise<ActionResponse<{ views: number }>> {
+  const validationResult = await action({
+    params,
+    schema: IncrementViewsSchema,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const { questionId } = params;
+  try {
+    const question = await Question.findById(questionId);
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    question.views += 1;
+
+    await question.save();
+    revalidatePath(ROUTES.QUESTION(questionId));
+
+    return {
+      success: true,
+      data: {
+        views: question.views,
+      },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;

@@ -4,7 +4,7 @@ export interface IQuestion {
   title: string;
   content: string;
   tags?: Types.ObjectId[];
-  view?: number;
+  views?: number;
   upvotes?: number;
   downvotes?: number;
   answers?: number;
@@ -29,7 +29,7 @@ const QuestionSchema = new Schema<IQuestion>(
         ref: "Tag",
       },
     ],
-    view: {
+    views: {
       type: Number,
       default: 0,
     },
