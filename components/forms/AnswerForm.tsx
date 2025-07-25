@@ -20,14 +20,25 @@ import {
 import { AnswerSchema } from "@/lib/validation";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
+import { api } from "@/lib/api";
 
 const Editor = dynamic(() => import("@/components/editor"), {
   ssr: false,
 });
 
-const AnswerForm = ({ questionId }: { questionId: string }) => {
+const AnswerForm = ({
+  questionId,
+  questionTitle,
+  questionContent,
+}: {
+  questionId: string;
+  questionTitle: string;
+  questionContent: string;
+}) => {
   const [isAnswering, startAnsweringTransition] = useTransition();
   const [isAISubmitting, setIsAISubmitting] = useState(false);
+  const session = useSession();
 
   const editorRef = useRef<MDXEditorMethods>(null);
 
@@ -64,6 +75,47 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
     });
   };
 
+  const generateAiAnswer = async () => {
+    if (session.status != "authenticated") {
+      return toast.error("Please log in", {
+        description: "You need to be logged in to generate AI answers.",
+      });
+    }
+
+    setIsAISubmitting(true);
+    const userAnswer = editorRef.current?.getMarkdown() || "";
+    try {
+      const { success, data, error } = await api.ai.getAnswer(
+        questionTitle,
+        questionContent,
+        userAnswer
+      );
+
+      if (!success) {
+        return toast.error("Error", {
+          description: error?.message || "Failed to generate AI answer.",
+        });
+      }
+      const formattedAnswer = data.replace(/<br>/g, "").toString().trim();
+      if (editorRef.current) {
+        editorRef.current.setMarkdown(formattedAnswer);
+        form.setValue("content", formattedAnswer);
+        form.trigger("content");
+      }
+
+      toast.success("Success", {
+        description: "AI answer generated successfully.1",
+      });
+    } catch (error) {
+      console.log(error);
+      return toast.error("Error", {
+        description: "Failed to generate AI answer.2",
+      });
+    } finally {
+      setIsAISubmitting(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
@@ -73,6 +125,7 @@ const AnswerForm = ({ questionId }: { questionId: string }) => {
         <Button
           className="btn light-border-2 gap-1.5 rounded-md border px-4 py-2.5 text-primary-500 shadow-none dark:text-primary-500"
           disabled={isAISubmitting}
+          onClick={generateAiAnswer}
         >
           {isAISubmitting ? (
             <>

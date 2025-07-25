@@ -203,7 +203,7 @@ export async function getQuestion(
     return handleError(validationResult) as ErrorResponse;
   }
 
-  const { questionId } = validationResult.params!;
+  const { questionId } = params;
 
   try {
     const question = await Question.findById(questionId)
