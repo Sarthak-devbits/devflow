@@ -167,7 +167,7 @@ export const GetAnswerSchema = PaginatedSearchParamsSchema.extend({
   }),
 });
 
-export const AIAnswerSchema =  z.object({
+export const AIAnswerSchema = z.object({
   question: z
     .string()
     .min(5, {
@@ -180,4 +180,25 @@ export const AIAnswerSchema =  z.object({
     message: "Answer has to have more than 10 characters.",
   }),
   userAnswer: z.string().optional(),
+});
+
+export const CreateVoteSchema = z.object({
+  targetId: z.string().min(1, {
+    message: "Target Id is required",
+  }),
+  targetType: z.enum(["question", "answer"], {
+    message: "Invalid target type.",
+  }),
+  voteType: z.enum(["upvote", "downvote"], {
+    message: "Invalid vote type",
+  }),
+});
+
+export const UpdateVoteSchema = CreateVoteSchema.extend({
+  change: z.number().int().min(-1).max(1),
+});
+
+export const HasVotedSchema = CreateVoteSchema.pick({
+  targetId: true,
+  targetType: true,
 });
