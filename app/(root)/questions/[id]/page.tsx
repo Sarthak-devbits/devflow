@@ -9,11 +9,12 @@ import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
+import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
-import React from "react";
+import React, { Suspense } from "react";
 
 const QuestionDetails = async ({ params }: RouteParams) => {
   const { id } = await params;
@@ -21,6 +22,8 @@ const QuestionDetails = async ({ params }: RouteParams) => {
   after(async () => {
     await incrementViews({ questionId: id });
   });
+
+  const { success, data: question } = await getQuestion({ questionId: id });
 
   const {
     success: areAnswersLoaded,
@@ -32,7 +35,11 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     pageSize: 10,
     filter: "latest",
   });
-  const { success, data: question } = await getQuestion({ questionId: id });
+
+  const hasVotedPromise = hasVoted({
+    targetId: question?._id as string,
+    targetType: "question",
+  });
 
   if (!success || !question) {
     redirect("/404");
@@ -59,12 +66,19 @@ const QuestionDetails = async ({ params }: RouteParams) => {
           </div>
 
           <div className="flex justify-end">
-            <Votes
-              upvotes={question?.upvotes}
-              hasUpVoted={true}
-              downVotes={question.downvotes}
-              hasDownVotes={false}
-            />
+            <Suspense
+              fallback={
+                <div className="w-20 h-6 bg-gray-200 animate-pulse rounded-md" />
+              }
+            >
+              <Votes
+                upvotes={question?.upvotes}
+                downVotes={question.downvotes}
+                hasVotedPromise={hasVotedPromise}
+                targetId={question._id}
+                targetType="question"
+              />
+            </Suspense>
           </div>
         </div>
 

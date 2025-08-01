@@ -28,6 +28,7 @@ async function action<T>({
     try {
       schema.parse(params);
     } catch (error) {
+      console.log(error);
       if (error instanceof ZodError) {
         return new ValidationError(
           error.flatten().fieldErrors as Record<string, string[]>
@@ -49,7 +50,6 @@ async function action<T>({
   }
 
   await dbConnect();
-
   return { params, session };
 }
 

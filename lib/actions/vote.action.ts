@@ -1,6 +1,6 @@
 "use server";
 
-import { ClientSession, Error, Error } from "mongoose";
+import { ClientSession } from "mongoose";
 import action from "../handlers/action";
 import {
   CreateVoteSchema,
@@ -11,8 +11,10 @@ import handleError from "../handlers/error";
 import mongoose from "mongoose";
 import { Answer, Question, Vote } from "@/database";
 import { error } from "console";
+import { revalidatePath } from "next/cache";
+import ROUTES from "@/constants/routes";
 
-async function UpdateVoteCount(
+export async function UpdateVoteCount(
   params: UpdateVoteCountParams,
   session?: ClientSession
 ): Promise<ActionResponse> {
@@ -54,7 +56,9 @@ async function UpdateVoteCount(
   }
 }
 
-async function CreateVote(params: CreateVoteParams): Promise<ActionResponse> {
+export async function CreateVote(
+  params: CreateVoteParams
+): Promise<ActionResponse> {
   const validationResult = await action({
     params,
     schema: CreateVoteSchema,
@@ -103,6 +107,10 @@ async function CreateVote(params: CreateVoteParams): Promise<ActionResponse> {
           }
         );
         await UpdateVoteCount(
+          { targetId, targetType, voteType: existingVote.voteType, change: -1 },
+          session
+        );
+        await UpdateVoteCount(
           { targetId, targetType, voteType, change: 1 },
           session
         );
@@ -111,8 +119,9 @@ async function CreateVote(params: CreateVoteParams): Promise<ActionResponse> {
       await Vote.create(
         [
           {
-            targetId,
-            targetType,
+            author: userId,
+            actionId: targetId,
+            actionType: targetType,
             voteType,
           },
         ],
@@ -124,6 +133,8 @@ async function CreateVote(params: CreateVoteParams): Promise<ActionResponse> {
       );
     }
     await session.commitTransaction();
+    revalidatePath(ROUTES.QUESTION(targetId));
+
     return { success: true };
   } catch (error) {
     session.abortTransaction();
@@ -133,7 +144,7 @@ async function CreateVote(params: CreateVoteParams): Promise<ActionResponse> {
   }
 }
 
-async function hasVoted(
+export async function hasVoted(
   params: HasVotedParams
 ): Promise<ActionResponse<HasVotedResponse>> {
   const validationResult = await action({
