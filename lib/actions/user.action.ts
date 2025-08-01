@@ -67,7 +67,7 @@ export async function getUsers(params: PaginatedSearchParams): Promise<
         isNext,
       },
     };
-    
+
   } catch (error) {
     return handleError(error as Error) as ErrorResponse;
   }
