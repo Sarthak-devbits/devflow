@@ -4,10 +4,12 @@ import Preview from "@/components/editor/Preview";
 import AnswerForm from "@/components/forms/AnswerForm";
 // import { Preview } from "@/components/editor/Preview";
 import Metric from "@/components/Metric";
+import SavedQuestions from "@/components/questions/SavedQuestions";
 import UserAvatar from "@/components/UserAvatar";
 import Votes from "@/components/votes/Votes";
 import ROUTES from "@/constants/routes";
 import { getAnswers } from "@/lib/actions/answer.action";
+import { hasSavedQuestion } from "@/lib/actions/collection.action";
 import { getQuestion, incrementViews } from "@/lib/actions/question.action";
 import { hasVoted } from "@/lib/actions/vote.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
@@ -41,6 +43,10 @@ const QuestionDetails = async ({ params }: RouteParams) => {
     targetType: "question",
   });
 
+  const hasSavedQuestionPromise = hasSavedQuestion({
+    questionId: question?._id as string,
+  });
+
   if (!success || !question) {
     redirect("/404");
   }
@@ -65,7 +71,7 @@ const QuestionDetails = async ({ params }: RouteParams) => {
             </Link>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end items-center gap-4">
             <Suspense
               fallback={
                 <div className="w-20 h-6 bg-gray-200 animate-pulse rounded-md" />
@@ -77,6 +83,16 @@ const QuestionDetails = async ({ params }: RouteParams) => {
                 hasVotedPromise={hasVotedPromise}
                 targetId={question._id}
                 targetType="question"
+              />
+            </Suspense>
+            <Suspense
+              fallback={
+                <div className="w-20 h-6 bg-gray-200 animate-pulse rounded-md" />
+              }
+            >
+              <SavedQuestions
+                questionId={question._id}
+                hasSavedQuestionPromise={hasSavedQuestionPromise}
               />
             </Suspense>
           </div>
