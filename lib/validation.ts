@@ -208,3 +208,9 @@ export const CollectionBaseSchema = z.object({
     message: "Question ID is required.",
   }),
 });
+
+export const GetUserSchema = z.object({
+  userId: z.string().min(1, {
+    message: "User Id is required",
+  }),
+});
