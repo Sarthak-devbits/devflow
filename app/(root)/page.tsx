@@ -2,6 +2,7 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
 import CommonFilter from "@/components/filters/CommonFilter";
 import HomeFilter from "@/components/filters/HomeFilter";
+import Pagination from "@/components/Pagination";
 import LocalSearch from "@/components/search/LocalSearch";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
@@ -66,8 +67,9 @@ export default async function Home({ searchParams }: SearchParams) {
     query,
     filter,
   });
-  const { questions } = data || {};
+  const { questions, isNext } = data || {};
 
+  console.log(page);
   return (
     <>
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -108,6 +110,7 @@ export default async function Home({ searchParams }: SearchParams) {
           );
         }}
       />
+      <Pagination page={page ?? 1} isNext={isNext || false} />
     </>
   );
 }

@@ -10,7 +10,6 @@ import User from "@/database/user.model";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { SignInSchema, SignUpSchema } from "../validation";
-import { error } from "console";
 import { NotFoundError } from "../http-errors";
 
 export async function signUpWithCredentials(
@@ -114,6 +113,8 @@ export async function signInWithCredentials(
 
     return { success: true };
   } catch (error) {
+    console.log("hereee");
+    console.log(error);
     return handleError(error) as ErrorResponse;
   }
 }

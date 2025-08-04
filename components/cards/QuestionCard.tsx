@@ -1,9 +1,10 @@
 import ROUTES from "@/constants/routes";
 import React from "react";
 import TagCard from "./TagCard";
-import { getTimeStamp } from "@/lib/utils";
+import { cn, getTimeStamp } from "@/lib/utils";
 import Metric from "../Metric";
 import Link from "next/link";
+import { Avatar, AvatarFallback } from "@radix-ui/react-avatar";
 
 interface Props {
   question: Question;
@@ -12,6 +13,12 @@ interface Props {
 const QuestionCard = ({
   question: { _id, title, tags, author, createdAt, upvotes, answers, views },
 }: Props) => {
+  const initials = author?.name
+    .split(" ")
+    .map((word: string) => word[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
   return (
     <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">

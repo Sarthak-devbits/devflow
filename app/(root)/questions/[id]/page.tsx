@@ -17,6 +17,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { after } from "next/server";
 import React, { Suspense } from "react";
+import page from "../../page";
 
 const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
@@ -142,6 +143,8 @@ const QuestionDetails = async ({ params, searchParams }: RouteParams) => {
       </div>
       <section className="my-5">
         <AllAnswers
+          page={page ? Number(page) : 1}
+          isNext={answersResult?.isNext || false}
           data={answersResult?.answers || []}
           success={areAnswersLoaded}
           error={answersError}

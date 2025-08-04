@@ -1,5 +1,6 @@
 import QuestionCard from "@/components/cards/QuestionCard";
 import DataRenderer from "@/components/DataRenderer";
+import Pagination from "@/components/Pagination";
 import LocalSearch from "@/components/search/LocalSearch";
 import ROUTES from "@/constants/routes";
 import { EMPTY_QUESTION } from "@/constants/states";
@@ -22,7 +23,9 @@ const page = async ({ params, searchParams }: RouteParams) => {
   return (
     <div>
       <section className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
-        <h1 className="h1-bold text-dark100_light900 capitalize">{tag?.name}</h1>
+        <h1 className="h1-bold text-dark100_light900 capitalize">
+          {tag?.name}
+        </h1>
       </section>
 
       <section className="mt-11">
@@ -47,6 +50,7 @@ const page = async ({ params, searchParams }: RouteParams) => {
           </div>
         )}
       />
+      <Pagination page={page ?? 1} isNext={isNext || false} />
     </div>
   );
 };
