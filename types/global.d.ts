@@ -62,6 +62,13 @@ interface Answer {
   downvotes: number;
 }
 
+
+interface Collection {
+  _id: string;
+  author: string | Author;
+  question: Question;
+}
+
 interface User {
   _id: string;
   name: string;
@@ -69,13 +76,8 @@ interface User {
   email: string;
   bio?: string;
   image?: string;
-  lcoation?: string;
+  location?: string;
   portfolio?: string;
   reputation?: number;
-}
-
-interface Collection {
-  _id: string;
-  author: string | Author;
-  question: Question;
+  createdAt: Date;
 }
