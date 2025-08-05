@@ -62,7 +62,6 @@ interface Answer {
   downvotes: number;
 }
 
-
 interface Collection {
   _id: string;
   author: string | Author;
@@ -80,4 +79,10 @@ interface User {
   portfolio?: string;
   reputation?: number;
   createdAt: Date;
+}
+
+interface BadgeCounts {
+  GOLD: number;
+  SILVER: number;
+  BRONZE: number;
 }
