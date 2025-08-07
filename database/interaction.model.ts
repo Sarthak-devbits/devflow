@@ -7,7 +7,19 @@ export interface IInteraction {
   actionType: "question" | "answer";
 }
 
+export const InteractionActionEnums = [
+  "view",
+  "upvote",
+  "downvote",
+  "bookmark",
+  "post",
+  "edit",
+  "delete",
+  "search",
+] as const;
+
 export interface IInteractionDoc extends IInteraction, Document {}
+
 const InteractionSchema = new Schema<IInteraction>(
   {
     user: {
@@ -17,6 +29,7 @@ const InteractionSchema = new Schema<IInteraction>(
     },
     action: {
       type: String,
+      enum: InteractionActionEnums,
       required: true,
     },
     actionId: {
@@ -25,8 +38,8 @@ const InteractionSchema = new Schema<IInteraction>(
     },
     actionType: {
       type: String,
-      required: true,
       enum: ["question", "answer"],
+      required: true,
     },
   },
   {
