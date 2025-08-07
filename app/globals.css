@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+@tailwind utilities;
+@import "tw-animate-css";
+
 @custom-variant dark (&:is(.dark *));
 @plugin "@tailwindcss/typography";
 
@@ -13,8 +16,8 @@ body {
 }
 
 @theme {
-  --color-primary-100: #fff1e6;
-  --color-primary-500: #ff7000;
+  --color-primary-100: #f3f4f6;
+  --color-primary-500: #8b5cf6;
 
   --color-dark-100: #000000;
   --color-dark-200: #0f1117;
@@ -290,7 +293,7 @@ body {
 }
 
 @utility primary-gradient {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #8b5cf6 0%, #a78bfa 100%);
 }
 
 @utility dark-gradient {
@@ -315,7 +318,7 @@ body {
 }
 
 @utility primary-text-gradient {
-  background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+  background: linear-gradient(129deg, #8b5cf6 0%, #a78bfa 100%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -362,7 +365,7 @@ body {
 }
 
 @utility tab {
-  @apply min-h-full! dark:bg-dark-400! bg-light-800! text-light-500! dark:data-[state=active]:bg-dark-300! data-[state=active]:bg-primary-100! data-[state=active]:text-primary-500! ;
+  @apply min-h-full! dark:bg-dark-400! bg-light-800! text-light-500! dark:data-[state=active]:bg-dark-300! data-[state=active]:bg-primary-100! data-[state=active]:text-primary-500!;
 }
 
 :root {
